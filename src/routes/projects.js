@@ -53,6 +53,15 @@ router.post("/", async (req, res) => {
 
   const authorIdNum = Number(authorId) || 1; // Default to admin (id: 1) if invalid
 
+  // Check if author exists
+  const author = await prisma.user.findUnique({
+    where: { id: authorIdNum }
+  });
+
+  if (!author) {
+    return res.status(400).json({ error: "Author not found" });
+  }
+
   const slug = title.toLowerCase().replace(/\s+/g, "-");
 
   const project = await prisma.project.create({
