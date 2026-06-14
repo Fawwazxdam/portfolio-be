@@ -1,0 +1,27 @@
+name: Deploy Backend to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Backend via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            # Masuk ke folder projek backend di direktori projects
+            cd /home/magentaadam/projects/portfolio-be # <--- Sesuaikan dengan path aslimu
+            
+            # Tarik kode terbaru dan update package
+            git pull origin main
+            npm install
+            
+            # Restart service PM2 backend
+            pm2 restart portfolio-be
